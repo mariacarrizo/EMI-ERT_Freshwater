@@ -190,3 +190,63 @@ def Plot2Datas(data_1D, data_3D):
     ax[2,3].semilogy(100*np.abs((data_1D[:,17]-data_3D[:,17])/data_3D[:,17]), ':r', label='V8 IP')
     ax[2,3].legend(fontsize=7)
     plt.tight_layout()
+    
+def Plot2Datas_field(data_1D, data_3D):
+
+    fig, ax = plt.subplots(2,4, sharex = True, sharey = True)
+
+    ax[0,0].semilogy(data_1D[:,0], '.b', label='H2 Q')
+    ax[0,0].semilogy(data_3D[:,0], 'xb' )
+    ax[0,0].semilogy(data_1D[:,1], '.k', label = 'H4 Q')
+    ax[0,0].semilogy(data_3D[:,1], 'xk')
+    ax[0,0].semilogy(data_1D[:,2], '.r', label= 'H8 Q')
+    ax[0,0].semilogy(data_3D[:,2], 'xr' )
+    ax[0,0].legend(fontsize=7)
+
+    ax[0,1].semilogy(100*np.abs((data_1D[:,0]-data_3D[:,0])/data_3D[:,0]), ':b', label='H2 Q')
+    ax[0,1].semilogy(100*np.abs((data_1D[:,1]-data_3D[:,1])/data_3D[:,1]), ':k', label='H4 Q')
+    ax[0,1].semilogy(100*np.abs((data_1D[:,2]-data_3D[:,2])/data_3D[:,2]), ':r', label='H8 Q')
+    ax[0,1].legend(fontsize=7)
+
+    ax[1,0].semilogy(data_1D[:,3], '.b', label='P2 Q')
+    ax[1,0].semilogy(data_3D[:,3], 'xb' )
+    ax[1,0].semilogy(data_1D[:,4], '.k', label = 'P4 Q')
+    ax[1,0].semilogy(data_3D[:,4], 'xk' )
+    ax[1,0].semilogy(data_1D[:,5], '.r', label= 'P8 Q')
+    ax[1,0].semilogy(data_3D[:,5], 'xr')
+    ax[1,0].legend(fontsize=7)
+
+    ax[1,1].semilogy(100*np.abs((data_1D[:,3]-data_3D[:,3])/data_3D[:,3]), 'b:', label='P2 Q')
+    ax[1,1].semilogy(100*np.abs((data_1D[:,4]-data_3D[:,4])/data_3D[:,4]), ':k', label='P4 Q')
+    ax[1,1].semilogy(100*np.abs((data_1D[:,5]-data_3D[:,5])/data_3D[:,5]), ':r', label='P8 Q')
+    ax[1,1].legend(fontsize=7)
+
+
+    ax[0,2].semilogy(data_1D[:,6], '.b', label='H2 IP')
+    ax[0,2].semilogy(data_3D[:,6], 'xb' )
+    ax[0,2].semilogy(data_1D[:,6], '.k', label = 'H4 IP')
+    ax[0,2].semilogy(data_3D[:,6], 'xk' )
+    ax[0,2].semilogy(data_1D[:,7], '.r', label= 'H8 IP')
+    ax[0,2].semilogy(data_3D[:,7], 'xr' )
+    ax[0,2].legend(fontsize=7)
+
+    ax[0,3].semilogy(100*np.abs((data_1D[:,6]-data_3D[:,6])/data_3D[:,6]), ':b', label = 'H2 IP')
+    ax[0,3].semilogy(100*np.abs((data_1D[:,7]-data_3D[:,7])/data_3D[:,7]), ':k', label = 'H4 IP')
+    ax[0,3].semilogy(100*np.abs((data_1D[:,8]-data_3D[:,8])/data_3D[:,8]), ':r', label = 'H8 IP')
+    ax[0,3].legend(fontsize=7)
+
+    ax[1,2].semilogy(data_1D[:,9], '.b', label='P2 IP')
+    ax[1,2].semilogy(data_3D[:,9], 'xb' )
+    ax[1,2].semilogy(data_1D[:,10], '.k', label = 'P4 IP')
+    ax[1,2].semilogy(data_3D[:,10], 'xk' )
+    ax[1,2].semilogy(data_1D[:,11], '.r', label= 'P8 IP')
+    ax[1,2].semilogy(data_3D[:,11], 'xr' )
+    ax[1,2].legend(fontsize=7)
+
+    ax[1,3].semilogy(100*np.abs((data_1D[:,9]-data_3D[:,9])/data_3D[:,9]), ':b', label = 'P2 IP')
+    ax[1,3].semilogy(100*np.abs((data_1D[:,10]-data_3D[:,10])/data_3D[:,10]), ':k', label = 'P4 IP')
+    ax[1,3].semilogy(100*np.abs((data_1D[:,11]-data_3D[:,11])/data_3D[:,11]), ':r', label = 'P8 IP')
+    ax[1,3].legend(fontsize=7)
+
+    plt.tight_layout()
+    

@@ -88,6 +88,88 @@ def FDEM1D(sgm, thk, height=0.1):
 
     return np.array([OP, IP]).ravel() 
 
+def FDEM1D_field(sgm, thk, height=0.1):
+    """ 1D FDEM response 
+        
+    Parameters
+    ----------
+    sgm : array
+           Array of electrical conductivities [S/m], len(sigma) = nlay
+
+    thk : array
+           Array of thicknesses [m], len(thk) = nlay - 1
+
+    Freq : frequency of device [Hz]
+
+    coilOrient : array of strings
+                  coil orientations: 'H' for horizontal coplanar, 
+                  'V' for vertical coplanar, 'P' for perpendicular
+
+    coilSpacing : array
+                    separations of the transmitter and receiver coils [m]
+
+    height : float
+                height of the device with respect to ground [m]
+
+    Returns
+    -------
+    Array [OP, IP]
+
+    """  
+    # Set geometry
+    Freq = 9000
+    coilSpacing = [2, 4, 8]
+    pcoilSpacing = [2.1, 4.1, 8.1]
+    coilOrient = np.array(['H', 'P'])
+    #height = 0
+
+    # Source and receivers geometry [x, y, z]
+    source    = [0, 0, -height]
+    receivers = [coilSpacing, np.zeros(len(coilSpacing)), -height]    
+    preceivers = [pcoilSpacing, np.zeros(len(pcoilSpacing)), -height]
+
+    # Depth and resistivity
+    res_air = 1e6
+    res = np.hstack((res_air, 1/sgm))
+    depth = np.hstack((0, np.cumsum(thk)))
+    # Empty array to store responses
+    OP = []
+    IP = []
+    
+    if any(coilOrient == 'H'):
+
+        H_Hs = ep.dipole(source, receivers, depth, res, Freq, ab = 66, xdirect=None, 
+                          verb=0)*(2j * np.pi * Freq * mu_0) 
+        H_Hp = ep.dipole(source, receivers, depth=[], res=[res_air], freqtime = Freq,
+                         ab = 66, verb=0)*(2j * np.pi * Freq * mu_0)   
+        op = (H_Hs/H_Hp).imag.amp() 
+        ip = (H_Hs/H_Hp).real.amp() 
+        OP.append(op)
+        IP.append(ip)
+
+    if any(coilOrient == 'P'):
+        # Maybe put 0.1m in receiver offset
+        P_Hs = ep.dipole(source, preceivers, depth, res, Freq, ab=46, xdirect=None, 
+                         verb=0)*(2j * np.pi * Freq * mu_0) 
+        P_Hp = ep.dipole(source, preceivers, depth=[], res=[res_air], freqtime= Freq,
+                         ab=66, verb=0)*(2j * np.pi * Freq * mu_0) 
+        op = (P_Hs/P_Hp).imag.amp() 
+        ip = (P_Hs/P_Hp).real.amp() 
+        OP.append(op)
+        IP.append(ip)
+        
+    if any(coilOrient == 'V'):
+        V_Hs = ep.dipole(source, receivers, depth, res, Freq, ab =55, xdirect=None, 
+                         verb=0)*(2j * np.pi * Freq * mu_0) 
+        V_Hp = ep.dipole(source, receivers, depth=[], res=[res_air], freqtime=Freq, 
+                         ab=55, verb=0)*(2j * np.pi * Freq * mu_0)
+        op = (V_Hs/V_Hp).imag.amp() 
+        ip = (V_Hs/V_Hp).real.amp() 
+        OP.append(op)
+        IP.append(ip)
+
+    return np.array([OP, IP]).ravel()
+
 def DualEM_842s(depth, res, coil_orient, height):
     """ Here we compute DualEM 842s data using the function `empymod.dipole` function
     for a 1D earth resistivity model
@@ -185,7 +267,7 @@ def DualEM_842s(depth, res, coil_orient, height):
 
     return OUT 
      
-class FDEM1DModelling(pg.frameworks.Modelling):
+class FDEM1DModelling_field(pg.frameworks.Modelling):
     
     def __init__(self, nlay=nlay):
         self.nlay = nlay
@@ -211,7 +293,7 @@ class FDEM1DModelling(pg.frameworks.Modelling):
         """ Compute response vector for a certain model [mod] 
         par = [thickness_1, thickness_2, ..., thickness_n, sigma_1, sigma_2, ..., sigma_n]
         """
-        resp = FDEM1D(np.asarray(par)[self.nlay-1:self.nlay*2-1],   # sigma
+        resp = FDEM1D_field(np.asarray(par)[self.nlay-1:self.nlay*2-1],   # sigma
                       np.asarray(par)[:self.nlay-1]                  # thickness
                       )
         return resp
