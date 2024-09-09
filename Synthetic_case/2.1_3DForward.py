@@ -30,7 +30,7 @@ mesh = emg3d.construct_mesh(frequency = frequency,
                          center_on_edge=True)
 
 # Load LCI model
-models_LCI = np.load('models/model_slope5.npy')
+models_LCI = np.load('models/model_sin.npy')
 
 npos = np.shape(models_LCI)[0]
 nlay = int((np.shape(models_LCI)[1]+1)/2)
@@ -190,11 +190,11 @@ def FDEM_3D(p):
 
 startTime = time.time()
 
-OUT = Parallel(n_jobs=48,verbose=1)(delayed(FDEM_3D)(p) for p in range(npos+5))
+OUT = Parallel(n_jobs=8,verbose=1)(delayed(FDEM_3D)(p) for p in range(npos+5))
 
 endTime = time.time()
 print('Done in', (endTime - startTime)/60, 'minutes!')
 
 OUT_all = pd.concat(OUT, ignore_index=True)
 
-OUT_all.to_pickle('data/data3D_slope5.pkl')
+OUT_all.to_pickle('data/data3D_sin.pkl')
